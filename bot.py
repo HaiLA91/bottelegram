@@ -35,7 +35,7 @@ client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 # 3. XỬ LÝ LỆNH ĐỘNG TỪ BẠN
 # ==========================================
 # Lắng nghe mọi tin nhắn bắt đầu bằng /noise4g (không phân biệt chữ hoa thường)
-@client.on(events.NewMessage(pattern=r'(?i)^/noise4g\s+(.+)', incoming=True, chats='me'))
+@client.on(events.NewMessage(pattern=r'(?i)^/noise4g\s+(.+)', chats='me'))
 async def handler(event):
     # Lấy CHÍNH XÁC toàn bộ câu bạn vừa gõ (vd: "/noise4g ehi6989")
     full_command = event.raw_text
