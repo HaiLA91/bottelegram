@@ -1,5 +1,6 @@
 import datetime
 import threading
+import os
 from flask import Flask
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
@@ -18,14 +19,13 @@ def run_web():
 threading.Thread(target=run_web).start()
 
 # ==========================================
-# 2. CẤU HÌNH THÔNG TIN BOT
+# 2. CẤU HÌNH THÔNG TIN BOT (BẢO MẬT)
 # ==========================================
-API_ID = 33464486  # Đổi thành API_ID của bạn (viết dạng số, không có dấu nháy)
-API_HASH = '250243bb2640592eee140795c11bd16c' # Đổi thành API_HASH của bạn
-SESSION_STRING = 'ĐIỀN_CHUỖI_MÃ_SESSION_VÀO_ĐÂY' # (Sẽ lấy ở bước sau)
-
-TARGET_GROUP = '@username_cua_nhom' # ID hoặc username của Group bạn muốn gửi lệnh tới
-
+# Lấy thông tin từ Biến môi trường thay vì ghi trực tiếp
+API_ID = int(os.environ.get('API_ID', 0)) 
+API_HASH = os.environ.get('API_HASH', '')
+SESSION_STRING = os.environ.get('SESSION_STRING', '')
+TARGET_GROUP = -1587192974
 # Khởi tạo Client bằng StringSession (Không cần file .session nữa)
 client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
