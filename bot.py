@@ -27,7 +27,7 @@ threading.Thread(target=run_web).start()
 API_ID = int(os.environ.get('API_ID', 0)) 
 API_HASH = os.environ.get('API_HASH', '')
 SESSION_STRING = os.environ.get('SESSION_STRING', '')
-TARGET_GROUP = -1587192974
+TARGET_GROUP = -1001587192974
 # Khởi tạo Client bằng StringSession (Không cần file .session nữa)
 client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
