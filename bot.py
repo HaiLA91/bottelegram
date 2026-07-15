@@ -73,7 +73,7 @@ async def group_listener(event):
                 
                 # Cắt sạch các dòng trống, ép các khối dính sát vào đường kẻ
                 file_content += "="*50 + "\n"
-                file_content += "\n==================================================\n".join(collected_texts)
+                file_content += "\n==============================================\n".join(collected_texts)
                 file_content += "\n" + "="*50 + "\n" # Thêm đường kẻ đóng khung ở cuối
                 
                 file_data = io.BytesIO(file_content.encode('utf-8'))
@@ -110,7 +110,7 @@ async def export_handler(event):
             
             # Cắt sạch các dòng trống, ép các khối dính sát vào đường kẻ
             file_content += "="*50 + "\n"
-            file_content += "\n==================================================\n".join(collected_texts)
+            file_content += "\n==============================================\n".join(collected_texts)
             file_content += "\n" + "="*50 + "\n"
             
             file_data = io.BytesIO(file_content.encode('utf-8'))
