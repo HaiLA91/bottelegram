@@ -72,9 +72,9 @@ async def export_handler(event):
             file_content = f"BÁO CÁO KẾT QUẢ THỐNG KÊ TRẠM: {device_id}\n"
             file_content += f"Ngày xuất file: {vn_now.strftime('%d/%m/%Y %H:%M:%S')}\n"
             
-            file_content += "="*50 + "\n"
-            file_content += "\n==========================================\n".join(collected_texts)
-            file_content += "\n" + "="*50 + "\n"
+            file_content += "="*46 + "\n"
+            file_content += f"\n{'='*46}\n".join(collected_texts)
+            file_content += "\n" + "="*46 + "\n"
             
             file_data = io.BytesIO(file_content.encode('utf-8'))
             file_data.name = f"BaoCao_{device_id}.txt"
