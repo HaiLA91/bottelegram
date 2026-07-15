@@ -81,7 +81,7 @@ async def export_handler(event):
             file_data = io.BytesIO(file_content.encode('utf-8'))
             file_data.name = f"BaoCao_{device_id}.txt"
             
-            await event.respond(file=file_data, caption=f"📄 Đã quét xong! File kết quả thông số của {device_id} đây nhé.")
+            await event.respond(f"📄 Đã quét xong! File kết quả thông số của {device_id} đây nhé.", file=file_data)
         else:
             await event.respond(f"❌ Không tìm thấy kết quả nào trả về cho mã '{device_id}' trong lịch sử gần đây của nhóm.")
             
