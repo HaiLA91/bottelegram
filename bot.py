@@ -30,6 +30,9 @@ TARGET_GROUP = -1001587192974
 
 client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
+# CHÍNH LÀ DÒNG NÀY (Kho chứa tin nhắn tự động)
+tracking_tasks = {}
+
 # ==========================================
 # 3. LẮNG NGHE LỆNH KHỞI CHẠY /noise4g
 # ==========================================
