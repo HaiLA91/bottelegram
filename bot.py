@@ -61,9 +61,11 @@ async def export_handler(event):
         
         collected_texts = []
         
-        # Lướt tìm trong 1000 tin nhắn gần nhất
+        # Lướt tìm trong 300 tin nhắn gần nhất
         async for message in client.iter_messages(TARGET_GROUP, limit=300):
-            if message.text and device_id in message.text.upper():
+            # Điều kiện mới: Có chứa mã trạm VÀ không được bắt đầu bằng dấu "/"
+            if message.text and device_id in message.text.upper() and not message.text.strip().startswith('/'):
+                
                 vn_time = message.date + datetime.timedelta(hours=7)
                 time_str = vn_time.strftime('%d/%m/%Y %H:%M:%S')
                 
