@@ -75,7 +75,7 @@ async def export_handler(event):
         if collected_texts:
             collected_texts.reverse()
             
-            file_content = f"BÁO CÁO KẾT QUẢ THỐNG KÊ TRẠM: {device_id}\n"
+            file_content = f"BÁO CÁO KẾT QUẢ THỐNG KÊ CELL: {device_id}\n"
             file_content += f"Ngày xuất file: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n"
             file_content += "="*50 + "\n\n"
             file_content += "\n==================================================\n\n".join(collected_texts)
