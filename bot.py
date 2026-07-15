@@ -53,12 +53,12 @@ async def handler(event):
 @client.on(events.NewMessage(pattern=r'(?i)^/export\s+(.+)', chats='me'))
 async def export_handler(event):
     device_id = event.pattern_match.group(1).strip().upper()
-    await event.respond(f"🔍 Đang quét 1000 tin nhắn gần nhất để gom dữ liệu cho trạm {device_id}...")
+    await event.respond(f"🔍 Đang quét 300 tin nhắn gần nhất để gom dữ liệu cho trạm {device_id}...")
     
     collected_texts = []
     
     # Lướt tìm trong 1000 tin nhắn gần nhất
-    async for message in client.iter_messages(TARGET_GROUP, limit=1000):
+    async for message in client.iter_messages(TARGET_GROUP, limit=300):
         if message.text and device_id in message.text.upper():
             # Chuyển đổi sang giờ Việt Nam (Render dùng giờ hệ thống UTC)
             vn_time = message.date + datetime.timedelta(hours=7)
