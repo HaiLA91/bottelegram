@@ -73,7 +73,7 @@ async def group_listener(event):
                 
                 # Cắt sạch các dòng trống, ép các khối dính sát vào đường kẻ
                 file_content += "="*50 + "\n"
-                file_content += "\n==============================================\n".join(collected_texts)
+                file_content += "\n==========================================\n".join(collected_texts)
                 file_content += "\n" + "="*50 + "\n" # Thêm đường kẻ đóng khung ở cuối
                 
                 file_data = io.BytesIO(file_content.encode('utf-8'))
@@ -88,13 +88,13 @@ async def group_listener(event):
 @client.on(events.NewMessage(pattern=r'(?i)^/export\s+(.+)', chats='me'))
 async def export_handler(event):
     device_id = event.pattern_match.group(1).strip().upper()
-    await event.respond(f"🔍 Đang quét 1000 tin nhắn gần nhất để gom dữ liệu cho trạm {device_id}...")
+    await event.respond(f"🔍 Đang quét 300 tin nhắn gần nhất để gom dữ liệu cho trạm {device_id}...")
     
     try:
         await client.get_dialogs(limit=20)
         collected_texts = []
         
-        async for message in client.iter_messages(TARGET_GROUP, limit=1000):
+        async for message in client.iter_messages(TARGET_GROUP, limit=300):
             if message.text and device_id in message.text.upper() and not message.text.strip().startswith('/'):
                 
                 # Dùng strip() để gọt sạch khoảng trắng thừa
@@ -110,7 +110,7 @@ async def export_handler(event):
             
             # Cắt sạch các dòng trống, ép các khối dính sát vào đường kẻ
             file_content += "="*50 + "\n"
-            file_content += "\n==============================================\n".join(collected_texts)
+            file_content += "\n==========================================\n".join(collected_texts)
             file_content += "\n" + "="*50 + "\n"
             
             file_data = io.BytesIO(file_content.encode('utf-8'))
