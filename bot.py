@@ -75,10 +75,14 @@ async def export_handler(event):
         if collected_texts:
             collected_texts.reverse()
             
-            file_content = f"BÁO CÁO KẾT QUẢ THỐNG KÊ CELL: {device_id}\n"
-            file_content += f"Ngày xuất file: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n"
+            # Lấy giờ UTC hiện tại của máy chủ và cộng thêm 7 tiếng cho chuẩn giờ VN
+            vn_now = datetime.datetime.utcnow() + datetime.timedelta(hours=7)
+            
+            file_content = f"BÁO CÁO KẾT QUẢ THỐNG KÊ TRẠM: {device_id}\n"
+            # Cập nhật dùng biến vn_now thay vì datetime.now()
+            file_content += f"Ngày xuất file: {vn_now.strftime('%d/%m/%Y %H:%M:%S')}\n"
             file_content += "="*50 + "\n\n"
-            file_content += "\n==================================================\n\n".join(collected_texts)
+            file_content += "\n==============================================\n\n".join(collected_texts)
             
             file_data = io.BytesIO(file_content.encode('utf-8'))
             file_data.name = f"BaoCao_{device_id}.txt"
