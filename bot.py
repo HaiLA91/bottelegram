@@ -30,9 +30,6 @@ TARGET_GROUP = -1001587192974
 
 client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
-# CHÍNH LÀ DÒNG NÀY (Kho chứa tin nhắn tự động)
-tracking_tasks = {}
-
 # ==========================================
 # 3. LẮNG NGHE LỆNH KHỞI CHẠY /noise4g
 # ==========================================
@@ -48,59 +45,23 @@ async def handler(event):
         scheduled_time = now + datetime.timedelta(minutes=1 + (15 * i))
         await client.send_message(TARGET_GROUP, full_command, schedule=scheduled_time)
         
-    await event.respond(f"✅ Xong! Đã lên lịch 8 lần '{full_command}' vào nhóm. Cứ yên tâm tắt máy, khi nào cần lấy dữ liệu thì gõ lệnh /export nhé.")
+    await event.respond(f"✅ Đã lên lịch xong 8 lần gửi vào nhóm!\n👉 Khi nào cần lấy dữ liệu, bạn gõ lệnh: `/export {device_id}` nhé.")
 
 # ==========================================
-# 4. TỰ ĐỘNG ĐẾM & GOM TIN NHẮN (MỚI)
-# ==========================================
-@client.on(events.NewMessage(chats=TARGET_GROUP))
-async def group_listener(event):
-    text = event.raw_text
-    
-    if not text or text.strip().startswith('/'):
-        return
-
-    for device_id, collected_texts in list(tracking_tasks.items()):
-        if device_id in text.upper():
-            
-            # Dùng strip() để gọt sạch khoảng trắng thừa ở đầu/cuối tin nhắn gốc
-            log_entry = text.strip()
-            collected_texts.append(log_entry)
-            print(f"Đã bắt được {len(collected_texts)}/8 kết quả cho {device_id}")
-            
-            if len(collected_texts) >= 8:
-                vn_now = datetime.datetime.utcnow() + datetime.timedelta(hours=7)
-                
-                file_content = f"BÁO CÁO KẾT QUẢ THỐNG KÊ TRẠM: {device_id}\n"
-                file_content += f"Ngày xuất file: {vn_now.strftime('%d/%m/%Y %H:%M:%S')}\n"
-                
-                # Cắt sạch các dòng trống, ép các khối dính sát vào đường kẻ
-                file_content += "="*50 + "\n"
-                file_content += "\n==========================================\n".join(collected_texts)
-                file_content += "\n" + "="*50 + "\n" # Thêm đường kẻ đóng khung ở cuối
-                
-                file_data = io.BytesIO(file_content.encode('utf-8'))
-                file_data.name = f"BaoCao_{device_id}.txt"
-                
-                await client.send_message('me', f"🎉 ĐÃ THU THẬP ĐỦ 8 KẾT QUẢ CHO TRẠM {device_id}!", file=file_data)
-                del tracking_tasks[device_id]
-
-# ==========================================
-# 5. LỆNH XUẤT FILE THỦ CÔNG (PHÒNG HỜ RENDER RESTART)
+# 4. LỆNH XUẤT FILE THỦ CÔNG (QUÉT 500 TIN NHẮN)
 # ==========================================
 @client.on(events.NewMessage(pattern=r'(?i)^/export\s+(.+)', chats='me'))
 async def export_handler(event):
     device_id = event.pattern_match.group(1).strip().upper()
-    await event.respond(f"🔍 Đang quét 300 tin nhắn gần nhất để gom dữ liệu cho trạm {device_id}...")
+    await event.respond(f"🔍 Đang quét 500 tin nhắn gần nhất để gom dữ liệu cho trạm {device_id}...")
     
     try:
         await client.get_dialogs(limit=20)
         collected_texts = []
         
-        async for message in client.iter_messages(TARGET_GROUP, limit=300):
+        # Quét 500 tin nhắn theo yêu cầu
+        async for message in client.iter_messages(TARGET_GROUP, limit=500):
             if message.text and device_id in message.text.upper() and not message.text.strip().startswith('/'):
-                
-                # Dùng strip() để gọt sạch khoảng trắng thừa
                 log_entry = message.text.strip()
                 collected_texts.append(log_entry)
         
@@ -111,7 +72,6 @@ async def export_handler(event):
             file_content = f"BÁO CÁO KẾT QUẢ THỐNG KÊ TRẠM: {device_id}\n"
             file_content += f"Ngày xuất file: {vn_now.strftime('%d/%m/%Y %H:%M:%S')}\n"
             
-            # Cắt sạch các dòng trống, ép các khối dính sát vào đường kẻ
             file_content += "="*50 + "\n"
             file_content += "\n==========================================\n".join(collected_texts)
             file_content += "\n" + "="*50 + "\n"
@@ -119,9 +79,9 @@ async def export_handler(event):
             file_data = io.BytesIO(file_content.encode('utf-8'))
             file_data.name = f"BaoCao_{device_id}.txt"
             
-            await event.respond(f"📄 Đã quét xong lịch sử! File kết quả thông số của {device_id} đây nhé.", file=file_data)
+            await client.send_message('me', f"📄 Đã quét xong lịch sử! File kết quả thông số của {device_id} đây nhé.", file=file_data)
         else:
-            await event.respond(f"❌ Không tìm thấy kết quả nào trả về cho mã '{device_id}' trong lịch sử gần đây.")
+            await event.respond(f"❌ Không tìm thấy kết quả nào trả về cho mã '{device_id}' trong 500 tin lịch sử gần đây.")
             
     except Exception as e:
         await event.respond(f"⚠️ Máy chủ báo lỗi trong lúc quét: {str(e)}")
