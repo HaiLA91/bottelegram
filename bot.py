@@ -38,14 +38,32 @@ async def handler(event):
     device_id = event.pattern_match.group(1).strip().upper()
     full_command = f"/noise4g {device_id}" 
     
-    await event.respond(f"⏳ Nhận lệnh. Đang lên lịch 8 tin cho thiết bị [{device_id}]...")
+    await event.respond(f"⏳ Đang lên lịch 8 tin cho cell [{device_id}]...")
     now = datetime.datetime.now()
     
     for i in range(8):
         scheduled_time = now + datetime.timedelta(minutes=1 + (15 * i))
         await client.send_message(TARGET_GROUP, full_command, schedule=scheduled_time)
         
-    await event.respond(f"✅ Đã lên lịch xong 8 lần gửi vào nhóm!\n👉 Khi nào cần lấy dữ liệu, bạn gõ lệnh: `/export {device_id}` nhé.")
+    await event.respond(f"✅ Đã lên lịch xong 8 lần gửi vào nhóm!")
+
+
+# ==========================================
+# 3.2 LẮNG NGHE LỆNH KHỞI CHẠY /noise2g
+# ==========================================
+@client.on(events.NewMessage(pattern=r'(?i)^/noise2g\s+(.+)', chats='me'))
+async def handler(event):
+    device_id = event.pattern_match.group(1).strip().upper()
+    full_command = f"/noise2g {device_id}" 
+    
+    await event.respond(f"⏳ Đang lên lịch 8 tin cho cell [{device_id}]...")
+    now = datetime.datetime.now()
+    
+    for i in range(8):
+        scheduled_time = now + datetime.timedelta(minutes=1 + (30 * i))
+        await client.send_message(TARGET_GROUP, full_command, schedule=scheduled_time)
+        
+    await event.respond(f"✅ Đã lên lịch xong 8 lần gửi vào nhóm!")
 
 # ==========================================
 # 4. LỆNH XUẤT FILE THỦ CÔNG (QUÉT 500 TIN NHẮN)
@@ -53,7 +71,7 @@ async def handler(event):
 @client.on(events.NewMessage(pattern=r'(?i)^/export\s+(.+)', chats='me'))
 async def export_handler(event):
     device_id = event.pattern_match.group(1).strip().upper()
-    await event.respond(f"🔍 Đang quét 500 tin nhắn gần nhất để gom dữ liệu cho trạm {device_id}...")
+    await event.respond(f"🔍 Đang gom dữ liệu cho trạm {device_id}...")
     
     try:
         await client.get_dialogs(limit=20)
@@ -79,9 +97,9 @@ async def export_handler(event):
             file_data = io.BytesIO(file_content.encode('utf-8'))
             file_data.name = f"BaoCao_{device_id}.txt"
             
-            await client.send_message('me', f"📄 Đã quét xong lịch sử! File kết quả thông số của {device_id} đây nhé.", file=file_data)
+            await client.send_message('me', f"📄 Đã quét xong File kết quả thông số của {device_id} đây nhé.", file=file_data)
         else:
-            await event.respond(f"❌ Không tìm thấy kết quả nào trả về cho mã '{device_id}' trong 500 tin lịch sử gần đây.")
+            await event.respond(f"❌ Không tìm thấy kết quả nào trả về cho mã '{device_id}'")
             
     except Exception as e:
         await event.respond(f"⚠️ Máy chủ báo lỗi trong lúc quét: {str(e)}")
