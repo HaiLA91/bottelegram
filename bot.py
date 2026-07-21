@@ -38,10 +38,10 @@ async def handler(event):
     device_id = event.pattern_match.group(1).strip().upper()
     full_command = f"/noise4g {device_id}" 
     
-    await event.respond(f"⏳ Đang lên lịch 8 tin cho cell [{device_id}]...")
+    await event.respond(f"⏳ Đang lên lịch 12 tin cho cell [{device_id}]...")
     now = datetime.datetime.now()
     
-    for i in range(8):
+    for i in range(12):
         scheduled_time = now + datetime.timedelta(minutes=1 + (15 * i))
         await client.send_message(TARGET_GROUP, full_command, schedule=scheduled_time)
         
@@ -60,13 +60,13 @@ async def handler(event):
     now = datetime.datetime.now()
     
     for i in range(8):
-        scheduled_time = now + datetime.timedelta(minutes=1 + (30 * i))
+        scheduled_time = now + datetime.timedelta(minutes=1 + (60 * i))
         await client.send_message(TARGET_GROUP, full_command, schedule=scheduled_time)
         
     await event.respond(f"✅ Đã lên lịch xong 8 lần gửi vào nhóm!")
 
 # ==========================================
-# 4. LỆNH XUẤT FILE THỦ CÔNG (QUÉT 500 TIN NHẮN)
+# 4. LỆNH XUẤT FILE THỦ CÔNG (QUÉT 800 TIN NHẮN)
 # ==========================================
 @client.on(events.NewMessage(pattern=r'(?i)^/export\s+(.+)', chats='me'))
 async def export_handler(event):
@@ -78,7 +78,7 @@ async def export_handler(event):
         collected_texts = []
         
         # Quét 500 tin nhắn theo yêu cầu
-        async for message in client.iter_messages(TARGET_GROUP, limit=500):
+        async for message in client.iter_messages(TARGET_GROUP, limit=800):
             if message.text and device_id in message.text.upper() and not message.text.strip().startswith('/'):
                 log_entry = message.text.strip()
                 collected_texts.append(log_entry)
